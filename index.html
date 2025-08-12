@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FreshCart — Simple E‑commerce Demo</title>
+  <meta name="description" content="Responsive e-commerce demo page with product grid and cart." />
+  <style>
+    /* Basic reset */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;line-height:1.4;color:#0f172a}
+
+    /* Layout */
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,#10b981,#06b6d4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav a{margin:0 8px;color:#334155;text-decoration:none}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin:20px 0}
+    .hero h1{font-size:2rem;margin:0 0 8px}
+    .hero p{margin:0 0 16px;color:#475569}
+    .cta{display:inline-block;padding:10px 16px;border-radius:8px;background:#0ea5a4;color:white;text-decoration:none;font-weight:600}
+
+    /* Products */
+    .controls{display:flex;justify-content:space-between;align-items:center;margin:18px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+    .card{border:1px solid #e6eef2;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;background:white;box-shadow:0 1px 3px rgba(2,6,23,0.04)}
+    .media{height:150px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:600;color:#94a3b8}
+    .title{font-weight:600;color:#0f172a}
+    .price{font-weight:700;color:#0ea5a4}
+    .actions{margin-top:auto;display:flex;gap:8px}
+    button{cursor:pointer;border:0;padding:8px 12px;border-radius:8px}
+    .btn-primary{background:#0ea5a4;color:#fff}
+    .btn-secondary{background:#f8fafc;color:#0f172a;border:1px solid #e6eef2}
+
+    /* Cart panel */
+    .cart-btn{position:relative}
+    .badge{position:absolute;top:-8px;right:-8px;background:#ef4444;color:white;border-radius:999px;padding:4px 7px;font-size:12px}
+    .cart-panel{position:fixed;right:20px;top:80px;width:320px;background:white;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.12);overflow:hidden;transform:translateY(-10px);display:none}
+    .cart-panel.open{display:block}
+    .cart-header{padding:14px 16px;border-bottom:1px solid #eef2f7;font-weight:700}
+    .cart-list{max-height:300px;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+    .cart-item{display:flex;gap:10px;align-items:center}
+    .cart-item .meta{flex:1}
+    .cart-footer{padding:12px;border-top:1px solid #eef2f7;display:flex;flex-direction:column;gap:8px}
+
+    /* Footer */
+    footer{margin-top:32px;padding:18px 0;color:#475569;border-top:1px solid #f1f5f9}
+
+    /* Responsive */
+    @media (max-width:880px){
+      .hero{grid-template-columns:1fr;}
+      .hero .card-img{order:-1}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">FC</div>
+        <div>
+          <div style="font-weight:700">FreshCart</div>
+          <div style="font-size:12px;color:#64748b">Groceries & more</div>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+        <button class="cart-btn" id="openCartBtn" aria-label="Open cart">
+          <!-- simple cart svg -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="10" cy="20" r="1" fill="#0f172a"></circle>
+            <circle cx="18" cy="20" r="1" fill="#0f172a"></circle>
+          </svg>
+          <span class="badge" id="cartCount" style="display:none">0</span>
+        </button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Fresh groceries delivered fast</h1>
+        <p>Hand-picked produce, daily essentials, and kitchen must-haves — delivered to your door. Simple cart, secure checkout.</p>
+        <a class="cta" href="#products">Shop Now</a>
+      </div>
+      <div class="card card-img" style="padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div style="font-size:18px;font-weight:700">Spotlight</div>
+        <div style="margin-top:12px;font-size:13px;color:#475569;text-align:center">Seasonal fresh mangoes — limited stock. Free delivery on orders above ₹500.</div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div style="font-weight:700">Featured Products</div>
+      <div><input id="search" placeholder="Search products..." style="padding:8px 10px;border-radius:8px;border:1px solid #e6eef2" /></div>
+    </div>
+
+    <main id="products" class="grid" aria-live="polite">
+      <!-- product cards inserted by JS -->
+    </main>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:700">FreshCart</div>
+          <div style="font-size:13px">© FreshCart — demo store</div>
+        </div>
+        <div style="font-size:13px;color:#64748b">Built with ❤️ — demo code</div>
+      </div>
+    </footer>
+
+    <!-- Cart Panel -->
+    <aside id="cartPanel" class="cart-panel" aria-hidden="true">
+      <div class="cart-header">Your cart</div>
+      <div class="cart-list" id="cartList">
+        <!-- items -->
+      </div>
+      <div class="cart-footer">
+        <div style="display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span id="cartTotal">₹0</span></div>
+        <div style="display:flex;gap:8px">
+          <button id="checkoutBtn" class="btn-primary" style="flex:1">Checkout</button>
+          <button id="clearCartBtn" class="btn-secondary" style="flex:0">Clear</button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    // Simple product dataset (would come from API in real app)
+    const PRODUCTS = [
+      {id:1,name:'Alphonso Mango (1 kg)',price:249,desc:'Sweet & juicy seasonal mangoes'},
+      {id:2,name:'Organic Bananas (1 dozen)',price:99,desc:'Ripe and ready to eat'},
+      {id:3,name:'Brown Rice (5 kg)',price:599,desc:'Whole grain, premium quality'},
+      {id:4,name:'Olive Cooking Oil (1L)',price:349,desc:'Heart-healthy cooking oil'},
+      {id:5,name:'Paneer (500g)',price:139,desc:'Fresh cottage cheese'},
+      {id:6,name:'Free-range Eggs (12 pcs)',price:169,desc:'Farm fresh eggs'},
+      {id:7,name:'Tomatoes (1 kg)',price:59,desc:'Fresh & plump'},
+      {id:8,name:'Whole Wheat Atta (10 kg)',price:399,desc:'Stone milled flour'},
+    ];
+
+    const state = { cart: {} };
+
+    // Utilities
+    const rupee = v => '₹' + v.toFixed(0);
+
+    // Render products
+    const productsEl = document.getElementById('products');
+    function renderProducts(list){
+      productsEl.innerHTML = '';
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="media">Image</div>
+          <div class="title">${p.name}</div>
+          <div style="color:#64748b;font-size:13px">${p.desc}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div class="price">${rupee(p.price)}</div></div>
+          <div class="actions">
+            <button class="btn-primary" data-add="${p.id}">Add to cart</button>
+            <button class="btn-secondary" data-view="${p.id}">View</button>
+          </div>
+        `;
+        productsEl.appendChild(card);
+      });
+    }
+
+    // Cart functions
+    function addToCart(id){
+      const prod = PRODUCTS.find(p=>p.id===id);
+      if(!prod) return;
+      if(state.cart[id]) state.cart[id].qty++;
+      else state.cart[id] = { ...prod, qty:1 };
+      syncCartUI();
+    }
+    function removeFromCart(id){
+      if(!state.cart[id]) return;
+      state.cart[id].qty--;
+      if(state.cart[id].qty<=0) delete state.cart[id];
+      syncCartUI();
+    }
+    function clearCart(){ state.cart = {}; syncCartUI(); }
+
+    function cartTotals(){
+      const items = Object.values(state.cart);
+      const qty = items.reduce((s,i)=>s+i.qty,0);
+      const total = items.reduce((s,i)=>s + i.qty*i.price,0);
+      return {qty,total};
+    }
+
+    // Sync cart UI
+    const cartCountEl = document.getElementById('cartCount');
+    const cartListEl = document.getElementById('cartList');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const cartPanel = document.getElementById('cartPanel');
+
+    function syncCartUI(){
+      const {qty,total} = cartTotals();
+      if(qty>0){
+        cartCountEl.style.display='inline-block';
+        cartCountEl.textContent = qty;
+      } else { cartCountEl.style.display='none'; }
+
+      cartListEl.innerHTML = '';
+      Object.values(state.cart).forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <div style="width:46px;height:46px;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-size:12px">img</div>
+          <div class="meta">
+            <div style="font-weight:700">${item.name}</div>
+            <div style="font-size:13px;color:#64748b">${rupee(item.price)} × ${item.qty}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button aria-label="increase" data-plus="${item.id}" style="padding:6px 8px">+</button>
+            <button aria-label="decrease" data-minus="${item.id}" style="padding:6px 8px">−</button>
+          </div>
+        `;
+        cartListEl.appendChild(row);
+      });
+
+      cartTotalEl.textContent = rupee(total);
+    }
+
+    // Event delegation for product buttons
+    document.addEventListener('click', e => {
+      const add = e.target.closest('[data-add]');
+      const view = e.target.closest('[data-view]');
+      const plus = e.target.closest('[data-plus]');
+      const minus = e.target.closest('[data-minus]');
+
+      if(add){ addToCart(Number(add.getAttribute('data-add'))); }
+      if(view){
+        const id = Number(view.getAttribute('data-view'));
+        const prod = PRODUCTS.find(p=>p.id===id);
+        alert(prod.name + '\n\n' + prod.desc + '\nPrice: ' + rupee(prod.price));
+      }
+      if(plus){ addToCart(Number(plus.getAttribute('data-plus'))); }
+      if(minus){ removeFromCart(Number(minus.getAttribute('data-minus'))); }
+    });
+
+    // Cart open/close
+    document.getElementById('openCartBtn').addEventListener('click', ()=>{
+      cartPanel.classList.toggle('open');
+      const hidden = cartPanel.classList.contains('open') ? 'false' : 'true';
+      cartPanel.setAttribute('aria-hidden', hidden);
+    });
+
+    // Checkout / clear
+    document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+      const {qty,total} = cartTotals();
+      if(qty===0){ alert('Your cart is empty. Add some items first.'); return; }
+      // In real app, you'd send cart to backend / payment gateway
+      alert(`Thank you!\n\nItems: ${qty}\nTotal: ${rupee(total)}\n\n(This is a demo checkout.)`);
+      clearCart();
+      cartPanel.classList.remove('open');
+    });
+    document.getElementById('clearCartBtn').addEventListener('click', ()=>{ clearCart(); });
+
+    // Search filter
+    document.getElementById('search').addEventListener('input', e => {
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+      renderProducts(filtered);
+    });
+
+    // Init
+    renderProducts(PRODUCTS);
+    syncCartUI();
+  </script>
+</body>
+</html>
